@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+            margin: 0;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            color: #1e3a8a;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #3b82f6;
+            text-shadow: 2px 2px #1e3a8a;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            overflow-y: auto;
+            max-height: 600px;
+            gap: 15px;
+        }
+
+        .flashcard {
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #93c5fd, #60a5fa);
+            border: 2px solid #1e3a8a;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.6s, box-shadow 0.3s ease-in-out;
+            position: relative;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .flashcard:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .flashcard.flip {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard .front, .flashcard .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 15px;
+        }
+
+        .flashcard .front {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+        }
+
+        .flashcard .back {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            transform: rotateY(180deg);
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px auto;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 10px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1e3a8a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Flashcards</h1>
+        <h2 align="center">Turn learning into a game with our flashcards!</h2>
+        <div class="card-container">
+            <!-- Flashcards will be dynamically inserted here -->
+        </div>
+        <button onclick="goBack()">Back</button>
+    </div>
+
+    <script>
+        let flashcards = [];
+
+        // Example flashcard data
+        function generateFlashcards() {
+            const keyWords = ['Paris', 'Eiffel', 'Egypt', 'Gandhi', 'Shakesphere'];
+            const descriptions = ['Paris  is known for its rich history and iconic landmarks. (Definition: Paris)', 'The Eiffel  is a globally recognized structure \nlocated in the heart of Paris . (Definition: Eiffel)', 'Egypt  is home to the famous Pyramids  of Giza, attracting tourists from \naround the world. (Definition: Egypt)', 'Gandhi is remembered for his nonviolent leadership in the fight for Indian independence.', 'Shakesphere is considered one of the greatest playwrights in history.'];
+            flashcards = keyWords.map((keyWord, index) => ({
+                keyWord: keyWord,
+                description: descriptions[index]
+            }));
+
+            const container = document.querySelector('.card-container');
+            container.innerHTML = '';
+            flashcards.forEach(flashcard => {
+                const card = document.createElement('div');
+                card.classList.add('flashcard');
+                card.innerHTML = `
+                    <div class="front">${flashcard.keyWord}</div>
+                    <div class="back">${flashcard.description}</div>
+                `;
+                card.onclick = () => card.classList.toggle('flip');
+                container.appendChild(card);
+            });
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        // Call the function to generate flashcards
+        generateFlashcards();
+    </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO DO LIST</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom right, #a2caef, #6eb0e2);
+            color: #333;
+        }
+        .header {
+            background-color: #1D4ED8;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .add-task {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .add-task input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .add-task button {
+            background-color: #1D4ED8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .add-task button:hover {
+            background-color: #1D4ED8;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+        }
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .task-item:hover {
+            transform: scale(1.02);
+        }
+        .task-details {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .task-details img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        .task-actions button {
+            margin-left: 10px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+        }
+        .task-actions .complete-btn {
+            background-color: #1D4ED8;
+        }
+        .task-actions .complete-btn:hover {
+            background-color: #1D4ED8;
+        }
+        .task-actions .delete-btn {
+            background-color: #ff4d4d;
+        }
+        .task-actions .delete-btn:hover {
+            background-color: #e63939;
+        }
+        .completed {
+            text-decoration: line-through;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>TO-DO LIST</h1>
+        <h2>Check It Off, Level Up!</h2>
+    </div>
+    <div class="container">
+        <div class="add-task">
+            <input id="taskInput" type="text" placeholder="Add a new task...">
+            <button onclick="addTask()">Add Task</button>
+        </div>
+        <ul id="taskList" class="task-list"></ul>
+    </div>
+
+    <script>
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const taskList = document.getElementById('taskList');
+            const taskText = taskInput.value.trim();
+
+            if (taskText === '') {
+                alert('Please enter a task!');
+                return;
+            }
+
+            const taskItem = document.createElement('li');
+            taskItem.className = 'task-item';
+
+            taskItem.innerHTML = `
+                <div class="task-details">
+                    
+                    <span class="task-title">${taskText}</span>
+                </div>
+                <div class="task-actions">
+                    <button class="complete-btn" onclick="completeTask(this)">Complete</button>
+                    <button class="delete-btn" onclick="deleteTask(this)">Delete</button>
+                </div>
+            `;
+
+            taskList.appendChild(taskItem);
+            taskInput.value = '';
+        }
+
+        function completeTask(button) {
+            const taskTitle = button.closest('.task-item').querySelector('.task-title');
+            taskTitle.classList.toggle('completed');
+        }
+
+        function deleteTask(button) {
+            const taskItem = button.closest('.task-item');
+            taskItem.remove();
+        }
+    </script>
+</body>
+</html>

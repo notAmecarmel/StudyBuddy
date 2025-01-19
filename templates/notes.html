@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Taking App</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+            color: white;
+        }
+        .note-container:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
+        }
+        .note-description {
+            position: relative;
+            color: transparent;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+        .note-description:focus-within {
+            color: white;
+            text-shadow: none;
+        }
+        .note-description textarea {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            resize: none;
+            color: white;
+            outline: none;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-4">
+        <header class="flex flex-col justify-between items-center py-4">
+            <h1 class="text-3xl font-bold">Note Taking App</h1>
+            <p class="text-lg italic text-blue-200">Organize your study notes seamlessly!</p>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4" onclick="addNote()">
+                <i class="fas fa-plus"></i> Add Note
+            </button>
+        </header>
+        <main id="notes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            <!-- Notes will be dynamically added here -->
+        </main>
+    </div>
+
+    <script>
+        function addNote() {
+            const notesContainer = document.getElementById('notes-container');
+            const note = document.createElement('div');
+            note.classList.add('bg-white', 'p-4', 'rounded', 'shadow', 'note-container', 'relative');
+            note.innerHTML = `
+                <h2 contenteditable="true" class="text-xl font-bold mb-2 text-gray-800">Note Title</h2>
+                <div class="note-description">
+                    <textarea placeholder="Add a description here..." class="text-gray-700"></textarea>
+                </div>
+                <div class="flex justify-between items-center mt-4">
+                    <button class="text-blue-600 hover:text-blue-700">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="text-red-600 hover:text-red-700" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            `;
+            notesContainer.appendChild(note);
+        }
+    </script>
+</body>
+</html>

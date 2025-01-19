@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Plan Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #1D4ED8;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-section label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .input-section input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 12px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-section input:focus {
+            border-color:#1D4ED8;
+            outline: none;
+        }
+
+        button {
+            background-color: #1D4ED8;
+            color: #fff;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color:#1D4ED8;
+        }
+
+        .result-container {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .study-plan {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .study-plan li {
+            background-color: #fafafa;
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .study-plan li:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .study-plan li:nth-child(even) {
+            background-color: #eef2f7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Study Plan Generator</h1>
+
+        <div class="input-section">
+            <label for="start-date">Start Date (Today's Date):</label>
+            <input type="date" id="start-date" value="" required>
+        </div>
+
+        <div class="input-section">
+            <label for="exam-date">Exam Date:</label>
+            <input type="date" id="exam-date" required>
+        </div>
+
+        <div class="input-section">
+            <label for="subject-name">Subject Name:</label>
+            <input type="text" id="subject-name" required>
+        </div>
+
+        <div class="input-section">
+            <label for="num-chapters">Number of Chapters:</label>
+            <input type="number" id="num-chapters" required>
+        </div>
+
+        <button id="add-subject">Add Subject</button>
+
+        <div class="result-container" id="result-container">
+            <h2>Combined Study Plan:</h2>
+            <div id="study-plan" class="study-plan"></div>
+        </div>
+    </div>
+
+    <script>
+        let subjects = [];
+
+        document.getElementById('add-subject').addEventListener('click', () => {
+            const startDate = document.getElementById('start-date').value;
+            const examDate = document.getElementById('exam-date').value;
+            const subjectName = document.getElementById('subject-name').value;
+            const numChapters = parseInt(document.getElementById('num-chapters').value);
+
+            if (!startDate || !examDate || !subjectName || !numChapters) {
+                alert("Please fill in all fields");
+                return;
+            }
+
+            const subject = {
+                subjectName,
+                startDate,
+                examDate,
+                numChapters,
+            };
+
+            subjects.push(subject);
+
+            if (confirm('Do you want to add another subject?')) {
+                resetFields();
+            } else {
+                generateStudyPlan();
+            }
+        });
+
+        function resetFields() {
+            document.getElementById('start-date').value = '';
+            document.getElementById('exam-date').value = '';
+            document.getElementById('subject-name').value = '';
+            document.getElementById('num-chapters').value = '';
+        }
+
+        function generateStudyPlan() {
+            const studyPlanDiv = document.getElementById('study-plan');
+            studyPlanDiv.innerHTML = '';
+            let totalDays = 0;
+            let allPlans = [];
+
+            subjects.forEach((subject) => {
+                const start = new Date(subject.startDate);
+                const end = new Date(subject.examDate);
+                const diffTime = end - start;
+                const availableDays = Math.ceil(diffTime / (1000 * 3600 * 24));
+
+                const chaptersPerDay = Math.floor(subject.numChapters / availableDays);
+                const remainingChapters = subject.numChapters % availableDays;
+
+                let dailyPlan = [];
+                for (let i = 0; i < availableDays; i++) {
+                    const chaptersToday = i < remainingChapters ? chaptersPerDay + 1 : chaptersPerDay;
+                    dailyPlan.push('${subject.subjectName}: ${chaptersToday} ,chapters');
+                }
+
+                allPlans = allPlans.concat(dailyPlan);
+            });
+
+            // Display the combined plan
+            allPlans.forEach((plan, index) => {
+                const listItem = document.createElement('li');
+                listItem.textContent = 'Day ${index + 1}: ${plan}';
+                studyPlanDiv.appendChild(listItem);
+            });
+
+            document.getElementById('result-container').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>

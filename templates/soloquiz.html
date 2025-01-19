@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(#79cbee, #2d9ece, #2b98c6);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #4c6ef5;
+            text-shadow: 2px 2px #d4e0f5;
+        }
+
+        #question-container {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .options button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 25px;
+            border: none;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            color: white;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .options button:hover {
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            transform: scale(1.1);
+        }
+
+        #timer {
+            font-size: 2rem;
+            color: #ff6f61;
+            margin: 20px 0;
+        }
+
+        #quiz-result {
+            font-size: 1.5rem;
+            color: #28a745;
+        }
+
+        button.start-quiz {
+            font-size: 1.2rem;
+            padding: 10px 30px;
+            border-radius: 25px;
+            border: none;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            color: white;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        button.start-quiz:hover {
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Let's Begin!</h1>
+        <h2>Push your limits, challenge yourself and be unstoppable<h2>
+        <button class="start-quiz" id="start-quiz-btn" onclick="startQuiz()">Start Quiz</button>
+
+        <div id="question-container" style="display: none;">
+            <p id="question-text"></p>
+            <div id="options" class="options"></div>
+        </div>
+
+        <div id="timer" style="display: none;">10</div>
+
+        <div id="quiz-result" style="display: none;">
+            <p>Your Score: <span id="score"></span></p>
+        </div>
+    </div>
+
+    <script>
+        const quizQuestions = [
+            {
+                question: "What is the capital of France?",
+                options: ["Berlin", "Madrid", "Paris", "Rome"],
+                answer: "Paris"
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Earth", "Mars", "Jupiter", "Venus"],
+                answer: "Mars"
+            },
+            {
+                question: "Who wrote 'To Kill a Mockingbird'?",
+                options: ["Harper Lee", "Mark Twain", "J.K. Rowling", "Ernest Hemingway"],
+                answer: "Harper Lee"
+            },
+            {
+                question: "What is the largest ocean on Earth?",
+                options: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
+                answer: "Pacific Ocean"
+            },
+            {
+                question: "Which is the smallest continent by land area?",
+                options: ["Australia", "Antarctica", "Europe", "South America"],
+                answer: "Australia"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timerTime = 10;
+        let timerInterval;
+
+        function startQuiz() {
+            document.getElementById('start-quiz-btn').style.display = 'none';
+            document.getElementById('question-container').style.display = 'block';
+            document.getElementById('timer').style.display = 'block';
+
+            currentQuestionIndex = 0;
+            score = 0;
+            showQuizQuestion();
+            startTimer();
+        }
+
+        function showQuizQuestion() {
+            if (currentQuestionIndex >= quizQuestions.length) {
+                endQuiz();
+                return;
+            }
+
+            const question = quizQuestions[currentQuestionIndex];
+            document.getElementById('question-text').innerText = question.question;
+
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+
+            question.options.forEach(option => {
+                const button = document.createElement('button');
+                button.innerText = option;
+                button.onclick = () => checkAnswer(option);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedOption) {
+            const correctAnswer = quizQuestions[currentQuestionIndex].answer;
+            if (selectedOption === correctAnswer) {
+                score++;
+            }
+
+            clearInterval(timerInterval);
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizQuestions.length) {
+                startTimer();
+                showQuizQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function startTimer() {
+            timerTime = 10;
+            document.getElementById('timer').innerText = timerTime;
+            timerInterval = setInterval(() => {
+                timerTime--;
+                document.getElementById('timer').innerText = timerTime;
+                if (timerTime <= 0) {
+                    clearInterval(timerInterval);
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < quizQuestions.length) {
+                        startTimer();
+                        showQuizQuestion();
+                    } else {
+                        endQuiz();
+                    }
+                }
+            }, 1000);
+        }
+
+        function endQuiz() {
+            clearInterval(timerInterval);
+            document.getElementById('question-container').style.display = 'none';
+            document.getElementById('timer').style.display = 'none';
+            document.getElementById('quiz-result').style.display = 'block';
+            document.getElementById('score').innerText = score;
+        }
+    </script>
+</body>
+</html>
