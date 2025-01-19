@@ -98,9 +98,4 @@ Feel free to fork the repository and make improvements. If you have any ideas, s
 
 ---
 
-## **License**
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
 By following these steps, you'll be able to set up StudyBuddy locally, experiment with its features, and contribute to its future development!
