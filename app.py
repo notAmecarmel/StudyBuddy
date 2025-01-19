@@ -11,15 +11,12 @@ import os
 
 app = Flask(__name__)
 
-# Set a secret key for sessions (Make sure to keep it secure)
 app.secret_key = os.urandom(24)  # Generate a random 24-byte secret key for your app
 
-# Function to summarize the text, considering all paragraphs
 def summarize_text(text, num_sentences=7):
     nlp = spacy.load('en_core_web_sm')
     paragraphs = text.split('\n\n')  # Split the text into paragraphs
 
-    # Calculate sentences to extract per paragraph
     total_sentences = sum(len(list(nlp(paragraph).sents)) for paragraph in paragraphs)
     sentences_per_paragraph = [
         max(1, round(len(list(nlp(paragraph).sents)) / total_sentences * num_sentences))
@@ -32,14 +29,12 @@ def summarize_text(text, num_sentences=7):
             continue
         doc = nlp(paragraph)
 
-        # Word frequency analysis for the paragraph
         tokens = [token.text.lower() for token in doc if not token.is_stop and not token.is_punct and token.text != '\n']
         word_freq = Counter(tokens)
         max_freq = max(word_freq.values(), default=1)  # Avoid division by zero
         for word in word_freq.keys():
             word_freq[word] = word_freq[word] / max_freq
 
-        # Score sentences within the paragraph
         sent_token = [sent.text for sent in doc.sents]
         sent_score = {}
         for sent in sent_token:
@@ -56,7 +51,6 @@ def summarize_text(text, num_sentences=7):
 
     return " ".join(summary)
 
-# Function to extract and clean text from a PDF
 def extract_clean_text_from_pdf(file_path):
     try:
         with open(file_path, 'rb') as pdf_file:
@@ -74,7 +68,6 @@ def extract_clean_text_from_pdf(file_path):
     except Exception as e:
         return f"An error occurred: {e}"
 
-# Function to generate flashcards from extracted text
 def generate_flashcards_from_text(text):
     nlp = spacy.load('en_core_web_sm')
     doc = nlp(text)
@@ -111,7 +104,6 @@ def generate_flashcards_from_text(text):
 
     return flashcards[:3]
 
-# Function to generate rapid-fire fill-in-the-blank questions from extracted text
 def generate_fill_in_the_blank_questions(text, num_questions=3):
     nlp = spacy.load('en_core_web_sm')
     doc = nlp(text)
@@ -199,7 +191,6 @@ def upload():
 def dropdown():
     return render_template('dropdown.html')
 
-# Route to handle file uploads and generate the JSON file
 @app.route('/upload', methods=['POST'])
 def handle_upload():
     if 'pdf_file' not in request.files:
@@ -209,35 +200,27 @@ def handle_upload():
     file_path = os.path.join("uploads", pdf_file.filename)
     pdf_file.save(file_path)
 
-    # Extract text from the uploaded PDF
     extracted_text = extract_clean_text_from_pdf(file_path)
 
-    # Summarize the extracted text
     summary = summarize_text(extracted_text, num_sentences=7)
 
-    # Generate flashcards based on the extracted text
     flashcards = generate_flashcards_from_text(extracted_text)
 
-    # Generate rapid-fire fill-in-the-blank questions from the extracted text
     questions = generate_fill_in_the_blank_questions(extracted_text, num_questions=3)
 
-    # Structure all data
     data = {
         "summary": summary,
         "flashcards": [{"question": fc["question"], "answer": fc["answer"]} for fc in flashcards],
         "rapid_fire_quiz": [{"question": q["question"], "options": q["options"], "correct_answer": q["correct_answer"]} for q in questions]
     }
 
-    # Save the data to a JSON file
     output_filename = f"{pdf_file.filename}_output.json"
     output_filepath = os.path.join("uploads", output_filename)
     with open(output_filepath, "w") as json_file:
         json.dump(data, json_file, indent=4)
 
-    # Store the filename in the session
     session['filename'] = output_filename
 
-    # Redirect to the dropdown page
     return redirect('/dropdown')
 
 if __name__ == '__main__':
